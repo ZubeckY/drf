@@ -24,8 +24,9 @@ SECRET_KEY = 'django-insecure-lb=te&fjfz5a4-j)vglu$-52xad$mh54dm1cv*+q-*%p%6@6vf
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -128,5 +129,9 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         # 'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
     ]
 }

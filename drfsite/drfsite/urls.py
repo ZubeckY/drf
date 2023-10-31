@@ -21,10 +21,13 @@ from product.views import *
 from rest_framework import routers
 
 
-router = routers.SimpleRouter()
-router.register(r'product', ProductViewSet, basename='product')
+# router = routers.SimpleRouter()
+# router.register(r'product', ProductViewSet, basename='product')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls)),
+    path('api/v1/product/', ProductAPIList.as_view()),
+    path('api/v1/product/<int:pk>/', ProductAPIUpdate.as_view()),
+    path('api/v1/product-delete/<int:pk>/', ProductAPIDestroy.as_view()),
+    # path('api/v1/', include(router.urls)),
 ]

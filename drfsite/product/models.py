@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
@@ -12,6 +12,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
     brand = models.ForeignKey('Brand', on_delete=models.PROTECT, null=True)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
