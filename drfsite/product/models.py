@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Product(models.Model):
     title = models.CharField(max_length=255)
     title_dark = models.BooleanField(default=False)
@@ -20,6 +21,17 @@ class Product(models.Model):
 
 class Brand(models.Model):
     title = models.CharField(max_length=255, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Advantage(models.Model):
+    title = models.CharField(max_length=255, db_index=True)
+    description = models.TextField(blank=True)
+    icon = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
