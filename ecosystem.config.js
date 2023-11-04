@@ -1,10 +1,10 @@
 module.exports = {
   apps: [
     {
-      name: "drf-api",
+      name: "drf",
       script: "drfsite/manage.py",
-      // args: ["runserver", "127.0.0.1:8000"],
-      args: ["runserver"],
+      args: ["runserver", "127.0.0.1:8000"],
+      // args: ["runserver", "81.200.119.121:8000"],
       exec_mode: "fork",
       instances: "1",
       wait_ready: true,
