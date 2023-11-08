@@ -165,7 +165,7 @@ class CartItem(models.Model):
     cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', on_delete=models.PROTECT,
                                   null=True)
     order_uuid = models.ForeignKey('Order', to_field='order_uuid', on_delete=models.PROTECT,
-                                   null=True)
+                                   null=True, blank=True)
     sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True)
     count = models.IntegerField(default=1)
     is_deleted = models.BooleanField(default=False)
