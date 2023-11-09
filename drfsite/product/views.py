@@ -1,3 +1,4 @@
+import requests
 from django.shortcuts import render
 
 from rest_framework import generics, viewsets
@@ -15,6 +16,16 @@ class ProductAPIList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query_param = self.request.GET.get('categories')
+
+        if query_param:
+            print(query_param)
+            queryset = queryset.filter(categories=query_param)  # Замените 'field_name' на имя поля фильтрации
+
+        return queryset
 
 
 class ProductAPIUpdate(generics.RetrieveUpdateAPIView):
