@@ -20,17 +20,40 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from product.views import *
 from rest_framework import routers
-
-
 # router = routers.SimpleRouter()
 # router.register(r'product', ProductViewSet, basename='product')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # products
     path('api/v1/product/', ProductAPIList.as_view()),
     path('api/v1/product/<int:pk>/', ProductAPIUpdate.as_view()),
     path('api/v1/product-delete/<int:pk>/', ProductAPIDestroy.as_view()),
+    # sub-product
+    path('api/v1/sub-product/', SubProductAPIList.as_view()),
+    # brand
+    path('api/v1/brand/', BrandsAPIList.as_view()),
+    # advantage
+    path('api/v1/advantage/', AdvantageAPIList.as_view()),
+    # category
+    path('api/v1/category/', CategoryAPIList.as_view()),
+    # shop
+    path('api/v1/shop/', ShopAPIList.as_view()),
+    # stock
+    path('api/v1/stock/', StockAPIList.as_view()),
+    # measure
+    path('api/v1/measure/', MeasureAPIList.as_view()),
+    # cart
+    path('api/v1/cart/', CartAPIList.as_view()),
+    # cart-item
+    path('api/v1/cart-item/', CartItemAPIList.as_view()),
+    # orders
+    path('api/v1/orders/', OrdersAPIList.as_view()),
+    # order-status
+    path('api/v1/order-status/', OrderStatusAPIList.as_view()),
+
     # path('api/v1/', include(router.urls)),
+    # auth
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

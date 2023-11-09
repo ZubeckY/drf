@@ -1,8 +1,7 @@
 from django.contrib import admin
 from .models import (Product, SubProduct, Brand, Category,
                      Advantage, Shop, Stock, Measure,
-                     Cart, CartItem, Order, OrderStatus, )
-
+                     Cart, CartItem, Order, OrderStatus,)
 
 admin.site.register(Product)
 admin.site.register(SubProduct)

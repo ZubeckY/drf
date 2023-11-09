@@ -7,9 +7,10 @@ from rest_framework.response import Response
 
 from .models import Product, Brand
 from .permissions import *
-from .serializers import ProductSerializer
+from .serializers import *
 
 
+# Product
 class ProductAPIList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -20,14 +21,80 @@ class ProductAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # permission_classes = (IsOwnerOrReadOnly, )
-    permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class ProductAPIDestroy(generics.RetrieveDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly,)
 
+
+# SubProduct
+class SubProductAPIList(generics.ListCreateAPIView):
+    queryset = SubProduct.objects.all()
+    serializer_class = SubProductSerializer
+
+
+# Brand
+class BrandsAPIList(generics.ListCreateAPIView):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+
+
+# Advantage
+class AdvantageAPIList(generics.ListCreateAPIView):
+    queryset = Advantage.objects.all()
+    serializer_class = AdvantageSerializer
+
+
+# Category
+class CategoryAPIList(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+# Shop
+class ShopAPIList(generics.ListCreateAPIView):
+    queryset = Shop.objects.all()
+    serializer_class = ShopSerializer
+
+
+# Stock
+class StockAPIList(generics.ListCreateAPIView):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
+
+
+# Measure
+class MeasureAPIList(generics.ListCreateAPIView):
+    queryset = Measure.objects.all()
+    serializer_class = MeasureSerializer
+
+
+# Cart
+class CartAPIList(generics.ListCreateAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+
+# CartItem
+class CartItemAPIList(generics.ListCreateAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+
+# Order
+class OrdersAPIList(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+# OrderStatus
+class OrderStatusAPIList(generics.ListCreateAPIView):
+    queryset = OrderStatus.objects.all()
+    serializer_class = OrderStatusSerializer
 
 # class ProductViewSet(viewsets.ModelViewSet):
 #     queryset = Product.objects.all()

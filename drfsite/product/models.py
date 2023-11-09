@@ -10,13 +10,14 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     image = models.CharField(max_length=255, blank=True)
     image_blur = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(default=True)
     brand = models.ForeignKey('Brand', on_delete=models.PROTECT, null=True)
     categories = models.ManyToManyField('Category', blank=True)
     advantages = models.ManyToManyField('Advantage', blank=True)
+    sub_products = models.ManyToManyField('SubProduct', blank=True)
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('title',)
@@ -39,12 +40,11 @@ class SubProduct(models.Model):
     dimensions_height = models.CharField(max_length=255, blank=True)
     dimensions_weight = models.CharField(max_length=255, blank=True)
     dimensions_length = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(default=True)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
     stock_item = models.ManyToManyField('Stock', blank=True)
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('title',)
