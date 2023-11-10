@@ -1,7 +1,9 @@
 import requests
 from django.shortcuts import render
+import uuid
+import logging
 
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -15,15 +17,15 @@ from .serializers import *
 class ProductAPIList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        query_param = self.request.GET.get('categories')
+        category = self.request.GET.get('categories')
 
-        if query_param:
-            print(query_param)
-            queryset = queryset.filter(categories=query_param)  # Замените 'field_name' на имя поля фильтрации
+        if category:
+            queryset = queryset.filter(categories=category)
 
         return queryset
 
@@ -93,6 +95,42 @@ class CartAPIList(generics.ListCreateAPIView):
 class CartItemAPIList(generics.ListCreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            sub_product_id = request.query_params.get('sub_product')
+            cart_uuid = request.query_params.get('cart_uuid')
+
+            # Создание нового объекта CartItem
+            sub_product = SubProduct.objects.get(pk=int(sub_product_id))
+            count = 1
+            total_price = sub_product.price * count
+
+            # Если cart_uuid не был в query
+            if not cart_uuid:
+                # Сохраняем модель
+                cart_item = CartItem(sub_product=sub_product, count=count, price=total_price)
+                cart_item.save()
+
+                # Создание нового объекта Cart
+                cart_item_list = [cart_item]
+                cart_total_price = sum([item.price for item in cart_item_list])
+
+                cart = Cart(cart_uuid=uuid.uuid4(), total_price=cart_total_price)
+                cart.save()
+
+                cart.cart_item.set(cart_item_list)
+
+                data = {'message': 'success'}
+                return Response(data)
+
+            data = {'message': 'success'}
+            return Response(data)
+
+        except Exception as e:
+            logging.error("Произошла ошибка: %s", str(e))
+            data = {'error': str(e)}
+            return Response(data)
 
 
 # Order
