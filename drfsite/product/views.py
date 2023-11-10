@@ -124,6 +124,13 @@ class CartItemAPIList(generics.ListCreateAPIView):
                 data = {'message': 'success'}
                 return Response(data)
 
+            cart_item = CartItem(sub_product=sub_product, count=count, price=total_price)
+            cart_item.save()
+
+            cart = Cart.objects.get(cart_uuid=cart_uuid)
+            cart.cart_item.add(cart_item)
+            cart.save()
+
             data = {'message': 'success'}
             return Response(data)
 
