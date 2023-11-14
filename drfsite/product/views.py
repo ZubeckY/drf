@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from django.db.models import Sum
 
-from .models import Product, Brand
 from .permissions import *
 from .serializers import *
 
@@ -18,7 +17,6 @@ from .serializers import *
 class ProductAPIList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
