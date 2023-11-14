@@ -1,7 +1,4 @@
 from rest_framework import serializers
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
-
 from .models import (Product, SubProduct, Brand, Category,
                      Advantage, Shop, Stock, Measure,
                      Cart, CartItem, Order, OrderStatus, )
@@ -83,7 +80,14 @@ class CartSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = "__all__"
+
+
 class OrderSerializer(serializers.ModelSerializer):
+    order_status = OrderStatusSerializer()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -91,7 +95,3 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OrderStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderStatus
-        fields = "__all__"

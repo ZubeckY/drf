@@ -180,7 +180,7 @@ class Order(models.Model):
     payed = models.BooleanField(default=False)
     payment_uuid = models.CharField(max_length=255, blank=True, unique=True)
     order_status = models.ForeignKey('OrderStatus', related_name="orderStatus", on_delete=models.PROTECT, null=True,
-                                     default=1)
+                                     default=5)
     cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', related_name="cart", on_delete=models.PROTECT,
                                   null=True)
     cart_item = models.ManyToManyField('CartItem', blank=True)
@@ -191,6 +191,9 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+    def __str__(self):
+        return 'Заказ № ' + str(self.pk)
 
 
 class OrderStatus(models.Model):

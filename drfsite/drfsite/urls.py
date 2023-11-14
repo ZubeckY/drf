@@ -19,9 +19,6 @@ from django.urls import path, include, re_path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from product.views import *
-from rest_framework import routers
-# router = routers.SimpleRouter()
-# router.register(r'product', ProductViewSet, basename='product')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,8 +44,10 @@ urlpatterns = [
     path('api/v1/cart/', CartAPIList.as_view()),
     # cart-item
     path('api/v1/cart-item/', CartItemAPIList.as_view()),
+    path('api/v1/cart-item/<int:pk>/', CartItemAPIUpdate.as_view()),
     # orders
-    path('api/v1/orders/', OrdersAPIList.as_view()),
+    path('api/v1/order/', OrdersAPIList.as_view()),
+    path('api/v1/order/<int:pk>/', OrdersAPIUpdate.as_view()),
     # order-status
     path('api/v1/order-status/', OrderStatusAPIList.as_view()),
 

@@ -1,13 +1,9 @@
-import requests
-from django.shortcuts import render
-import re
 import uuid
 import logging
 from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
-from django.db.models import Sum
 
 from .permissions import *
 from .serializers import *
@@ -17,6 +13,7 @@ from .serializers import *
 class ProductAPIList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -159,8 +156,6 @@ class CartItemAPIList(generics.ListCreateAPIView):
                 cart_item = CartItem(sub_product=sub_product, count=count, cart_uuid=cart_uuid)
                 cart_item.save()
 
-                print(cart_item)
-
                 cart = Cart.objects.get(cart_uuid=cart_uuid)
                 cart.cart_item.add(cart_item)
                 cart.save()
@@ -180,8 +175,21 @@ class CartItemAPIList(generics.ListCreateAPIView):
             return Response(data)
 
 
+class CartItemAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
 # Order
 class OrdersAPIList(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+# Order
+class OrdersAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -191,22 +199,3 @@ class OrdersAPIList(generics.ListCreateAPIView):
 class OrderStatusAPIList(generics.ListCreateAPIView):
     queryset = OrderStatus.objects.all()
     serializer_class = OrderStatusSerializer
-
-# class ProductViewSet(viewsets.ModelViewSet):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#
-#     def get_queryset(self):
-#         pk = self.kwargs.get('pk')
-#         limit_q = self.request.GET.get('limit')
-#         if not pk:
-#             if limit_q:
-#                 limit = int(re.findall(r'-[0-9]+|[0-9]+', limit_q)[0])
-#                 return Product.objects.all()[:limit]
-#             return Product.objects.all()
-#         return Product.objects.filter(pk=pk)
-#
-#     @action(methods=['get'], detail=False)
-#     def brands(self, request):
-#         brands = Brand.objects.all()
-#         return Response([{"title": b.title} for b in brands])
