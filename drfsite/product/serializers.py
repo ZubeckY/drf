@@ -68,6 +68,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    sub_product = SubProductSerializer()
+
     class Meta:
         model = CartItem
         fields = "__all__"

@@ -163,9 +163,9 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
+    cart_uuid = models.CharField(max_length=255, blank=True)
     sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True)
     count = models.IntegerField(default=1)
-    price = models.IntegerField(default=100)
     is_deleted = models.BooleanField(default=False)
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -179,7 +179,6 @@ class CartItem(models.Model):
 class Order(models.Model):
     payed = models.BooleanField(default=False)
     payment_uuid = models.CharField(max_length=255, blank=True, unique=True)
-
     order_status = models.ForeignKey('OrderStatus', related_name="orderStatus", on_delete=models.PROTECT, null=True,
                                      default=1)
     cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', related_name="cart", on_delete=models.PROTECT,

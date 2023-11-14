@@ -1,12 +1,13 @@
 import requests
 from django.shortcuts import render
+import re
 import uuid
 import logging
-
 from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
+from django.db.models import Sum
 
 from .models import Product, Brand
 from .permissions import *
@@ -96,46 +97,87 @@ class CartItemAPIList(generics.ListCreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
 
+    def get_queryset(self):
+        cart_uuid = self.request.query_params.get('cart_uuid', None)
+        queryset = super().get_queryset()
+
+        if cart_uuid:
+            queryset.filter(cart_uuid=cart_uuid, is_deleted=True).delete()
+            queryset = queryset.filter(cart_uuid=cart_uuid, is_deleted=False, is_ordered=False)
+            cart = Cart.objects.get(cart_uuid=cart_uuid)
+
+            cart_price = sum((cart_item.sub_product.price * cart_item.count) for cart_item in queryset)
+            cart.total_price = cart_price
+            cart.save()
+
+        return queryset
+
     def post(self, request, *args, **kwargs):
         try:
             sub_product_id = request.query_params.get('sub_product')
             cart_uuid = request.query_params.get('cart_uuid')
 
+            def returnResult(cart_item):
+                return {'cart_uuid': str(cart_item.cart_uuid), 'cart_item': str({
+                    "id": cart_item.id,
+                    "cart_uuid": str(cart_item.cart_uuid),
+                    "sub_product": cart_item.sub_product.id,
+                    "count": cart_item.count
+                })}
+
             # Создание нового объекта CartItem
             sub_product = SubProduct.objects.get(pk=int(sub_product_id))
             count = 1
-            total_price = sub_product.price * count
 
             # Если cart_uuid не был в query
             if not cart_uuid:
                 # Сохраняем модель
-                cart_item = CartItem(sub_product=sub_product, count=count, price=total_price)
+                cart_item = CartItem(sub_product=sub_product, count=count)
                 cart_item.save()
 
                 # Создание нового объекта Cart
                 cart_item_list = [cart_item]
-                cart_total_price = sum([item.price for item in cart_item_list])
+                cart_total_price = sum([item.sub_product.price * item.count for item in cart_item_list])
 
                 cart = Cart(cart_uuid=uuid.uuid4(), total_price=cart_total_price)
                 cart.save()
 
                 cart.cart_item.set(cart_item_list)
 
-                data = {'message': 'success'}
-                return Response(data)
+                cart_item.cart_uuid = cart.cart_uuid
+                cart_item.save()
 
-            cart_item = CartItem(sub_product=sub_product, count=count, price=total_price)
-            cart_item.save()
+                return Response(returnResult(cart_item))
 
-            cart = Cart.objects.get(cart_uuid=cart_uuid)
-            cart.cart_item.add(cart_item)
-            cart.save()
+            # Проверяем наличие корзины
+            is_current_cart = Cart.objects.filter(cart_uuid=cart_uuid)
+            if not is_current_cart:
+                return Response({'message': 'Корзина не найдена!'})
 
-            data = {'message': 'success'}
-            return Response(data)
+            # Проверяем наличие элемента
+            cart_item_from_db = CartItem.objects.filter(cart_uuid=cart_uuid, sub_product=sub_product)
+            if not cart_item_from_db:
+                # Создаём новый элемент с 0
+                cart_item = CartItem(sub_product=sub_product, count=count, cart_uuid=cart_uuid)
+                cart_item.save()
+
+                print(cart_item)
+
+                cart = Cart.objects.get(cart_uuid=cart_uuid)
+                cart.cart_item.add(cart_item)
+                cart.save()
+
+                return Response(returnResult(cart_item))
+
+            new_count = cart_item_from_db[0].count + 1
+            cart_item_from_db[0].count = new_count
+
+            cart_item_from_db[0].save()
+
+            return Response(returnResult(cart_item_from_db[0]))
 
         except Exception as e:
-            logging.error("Произошла ошибка: %s", str(e))
+            logging.error(" %s", str(e))
             data = {'error': str(e)}
             return Response(data)
 
