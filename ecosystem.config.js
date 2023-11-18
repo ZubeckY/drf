@@ -1,7 +1,7 @@
 module.exports = {
    apps:
       [{
-        name: "apiLakva",
+        name: "apiLavka",
         script: "drfsite/manage.py",
         args: ["runserver", "81.200.119.121:8000"],
         exec_mode: "fork",
