@@ -121,6 +121,7 @@ class Shop(models.Model):
     address_lat = models.CharField(max_length=255, blank=True)
     address_lon = models.CharField(max_length=255, blank=True)
     address_map_link = models.TextField(blank=True)
+    images = models.TextField(blank=True)
     contact_phone = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
