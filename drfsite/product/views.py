@@ -104,8 +104,9 @@ class CartItemAPIList(generics.ListCreateAPIView):
             cart_price = sum((cart_item.sub_product.price * cart_item.count) for cart_item in queryset)
             cart.total_price = cart_price
             cart.save()
+            return queryset
 
-        return queryset
+        return queryset.none()
 
     def post(self, request, *args, **kwargs):
         try:
