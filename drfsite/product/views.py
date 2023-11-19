@@ -182,6 +182,11 @@ class CartItemAPIUpdate(generics.RetrieveUpdateAPIView):
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
+class CartItemAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+
 # Order
 class OrdersAPIList(generics.ListCreateAPIView):
     queryset = Order.objects.all()
