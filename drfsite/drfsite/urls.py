@@ -45,6 +45,7 @@ urlpatterns = [
     # cart-item
     path('api/v1/cart-item/', CartItemAPIList.as_view()),
     path('api/v1/cart-item/<int:pk>/', CartItemAPIUpdate.as_view()),
+    path('api/v1/cart-item/<int:pk>/', CartItemAPIDestroy.as_view()),
     # orders
     path('api/v1/order/', OrdersAPIList.as_view()),
     path('api/v1/order/<int:pk>/', OrdersAPIUpdate.as_view()),
