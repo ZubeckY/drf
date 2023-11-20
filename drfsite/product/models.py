@@ -3,21 +3,21 @@ from django.contrib.auth.models import User
 
 
 class Product(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name='Название')
     slug = models.SlugField(max_length=255, db_index=True)
-    title_dark = models.BooleanField(default=False)
-    compound = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    image = models.CharField(max_length=255, blank=True)
-    image_blur = models.CharField(max_length=255, blank=True)
-    brand = models.ForeignKey('Brand', on_delete=models.PROTECT, null=True)
-    categories = models.ManyToManyField('Category', blank=True)
-    advantages = models.ManyToManyField('Advantage', blank=True)
-    sub_products = models.ManyToManyField('SubProduct', blank=True)
+    title_dark = models.BooleanField(default=False, verbose_name='Тёмное название (для мобилки)')
+    compound = models.TextField(blank=True, verbose_name='Состав')
+    description = models.TextField(blank=True, verbose_name='Описание')
+    image = models.CharField(max_length=255, blank=True, verbose_name='Изображение')
+    image_blur = models.CharField(max_length=255, blank=True, verbose_name='Блюр изображения')
+    brand = models.ForeignKey('Brand', on_delete=models.PROTECT, null=True, verbose_name='Поставщик/бренд')
+    categories = models.ManyToManyField('Category', blank=True, verbose_name='Категории')
+    advantages = models.ManyToManyField('Advantage', blank=True, verbose_name='Преимущества')
+    sub_products = models.ManyToManyField('SubProduct', blank=True, verbose_name='Подпордукты')
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    is_published = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -30,21 +30,22 @@ class Product(models.Model):
 
 
 class SubProduct(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name='Название')
     slug = models.SlugField(max_length=200, db_index=True)
-    weight_value = models.IntegerField(blank=True)
-    weight_measure = models.ForeignKey('Measure', on_delete=models.CASCADE, null=True)
-    images = models.TextField(blank=True)
-    price = models.IntegerField(blank=False)
-    dimensions_width = models.CharField(max_length=255, blank=True)
-    dimensions_height = models.CharField(max_length=255, blank=True)
-    dimensions_weight = models.CharField(max_length=255, blank=True)
-    dimensions_length = models.CharField(max_length=255, blank=True)
-    stock_item = models.ManyToManyField('Stock', blank=True)
+    weight_value = models.IntegerField(blank=True, verbose_name='Вес')
+    weight_measure = models.ForeignKey('Measure', verbose_name='Мера (гр, мл..)', on_delete=models.CASCADE, null=True)
+    images = models.TextField(blank=True, verbose_name='Изображения')
+    price = models.IntegerField(blank=False, verbose_name='Цена')
+    main_product_id = models.ForeignKey('Product', verbose_name='Главный продукт', on_delete=models.CASCADE, blank=True)
+    dimensions_length = models.CharField(max_length=255, blank=True, verbose_name='Длина упаковки')
+    dimensions_width = models.CharField(max_length=255, blank=True, verbose_name='Ширина упаковки')
+    dimensions_height = models.CharField(max_length=255, blank=True, verbose_name='Высота упаковки')
+    dimensions_weight = models.CharField(max_length=255, blank=True, verbose_name='Вес упаковки')
+    stock_item = models.ManyToManyField('Stock', blank=True, verbose_name='Количество в магазине')
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    is_published = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -57,7 +58,7 @@ class SubProduct(models.Model):
 
 
 class Measure(models.Model):
-    value = models.CharField(max_length=25)
+    value = models.CharField(max_length=25, verbose_name='Значение')
 
     class Meta:
         verbose_name = 'Мера'
@@ -68,9 +69,9 @@ class Measure(models.Model):
 
 
 class Brand(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255, db_index=True, verbose_name='Название')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -82,9 +83,9 @@ class Brand(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255, db_index=True, verbose_name='Название')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -96,11 +97,11 @@ class Category(models.Model):
 
 
 class Advantage(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
-    description = models.TextField(blank=True)
-    icon = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255, db_index=True, verbose_name='Назание')
+    description = models.TextField(blank=True, verbose_name='Описание')
+    icon = models.TextField(blank=True, verbose_name='Иконка')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -112,19 +113,19 @@ class Advantage(models.Model):
 
 
 class Shop(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
-    address_region = models.CharField(max_length=255, blank=True)
-    address_district = models.CharField(max_length=255, blank=True)
-    address_city = models.CharField(max_length=255, blank=True)
-    address_street = models.CharField(max_length=255, blank=True)
-    address_home = models.CharField(max_length=255, blank=True)
-    address_lat = models.CharField(max_length=255, blank=True)
-    address_lon = models.CharField(max_length=255, blank=True)
-    address_map_link = models.TextField(blank=True)
-    images = models.TextField(blank=True)
-    contact_phone = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255, db_index=True, verbose_name='Название')
+    address_region = models.CharField(max_length=255, blank=True, verbose_name='Регион')
+    address_district = models.CharField(max_length=255, blank=True, verbose_name='Округ')
+    address_city = models.CharField(max_length=255, blank=True, verbose_name='Город')
+    address_street = models.CharField(max_length=255, blank=True, verbose_name='Улица')
+    address_home = models.CharField(max_length=255, blank=True, verbose_name='Номер дома')
+    address_lat = models.CharField(max_length=255, blank=True, verbose_name='длина координат')
+    address_lon = models.CharField(max_length=255, blank=True, verbose_name='ширина координат')
+    address_map_link = models.TextField(blank=True, verbose_name='ссылка для карты')
+    images = models.TextField(blank=True, verbose_name='Изображения')
+    contact_phone = models.CharField(max_length=255, blank=True, verbose_name='Контактный телефон')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         ordering = ('title',)
@@ -136,12 +137,12 @@ class Shop(models.Model):
 
 
 class Stock(models.Model):
-    title = models.CharField(max_length=255)
-    shop = models.ForeignKey('Shop', on_delete=models.PROTECT, null=True)
-    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True)
-    count = models.IntegerField(default=1)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255, verbose_name='Название')
+    shop = models.ForeignKey('Shop', on_delete=models.PROTECT, null=True, verbose_name='Магазин')
+    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True, verbose_name='Подпродукт')
+    count = models.IntegerField(default=1, verbose_name='Количество')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         verbose_name = 'Склад'
@@ -153,10 +154,10 @@ class Stock(models.Model):
 
 class Cart(models.Model):
     cart_uuid = models.CharField(max_length=255, unique=True)
-    cart_item = models.ManyToManyField('CartItem', blank=True)
-    total_price = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    cart_item = models.ManyToManyField('CartItem', blank=True, verbose_name='Количество')
+    total_price = models.IntegerField(verbose_name='Полная цена')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         verbose_name = 'Корзина'
@@ -165,12 +166,12 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart_uuid = models.CharField(max_length=255, blank=True)
-    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True)
-    count = models.IntegerField(default=1)
-    is_deleted = models.BooleanField(default=False)
-    is_ordered = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True , verbose_name='Подпродукт')
+    count = models.IntegerField(default=1, verbose_name='Количество')
+    is_deleted = models.BooleanField(default=False, verbose_name='Удалено')
+    is_ordered = models.BooleanField(default=False, verbose_name='Заказано')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         verbose_name = 'Товар в корзине'
@@ -178,16 +179,16 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    payed = models.BooleanField(default=False)
+    payed = models.BooleanField(default=False, verbose_name='Оплачено')
     payment_uuid = models.CharField(max_length=255, blank=True, unique=True)
     order_status = models.ForeignKey('OrderStatus', related_name="orderStatus", on_delete=models.PROTECT, null=True,
-                                     default=5)
+                                     default=5, verbose_name='Статус заказа')
     cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', related_name="cart", on_delete=models.PROTECT,
                                   null=True)
-    cart_item = models.ManyToManyField('CartItem', blank=True)
+    cart_item = models.ManyToManyField('CartItem', blank=True, verbose_name='Товары в заказе')
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -198,7 +199,7 @@ class Order(models.Model):
 
 
 class OrderStatus(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name='Значение')
 
     class Meta:
         ordering = ('title',)
