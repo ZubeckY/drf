@@ -191,6 +191,34 @@ class CartItemAPIDestroy(generics.RetrieveDestroyAPIView):
 class OrdersAPIList(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            cart_uuid = request.query_params.get('cart_uuid')
+            payment_id = request.query_params.get('payment_id')
+            payment_status = bool(request.query_params.get('payment_status'))
+
+            def getOrderStatus():
+                return 'В обработке' if payment_status else 'Ожидает оплаты'
+
+            order_status = OrderStatus.objects.filter(title=getOrderStatus())
+            cart_items = CartItem.objects.filter(cart_uuid=cart_uuid)
+
+            order = Order(
+                payed=payment_status,
+                payment_uuid=uuid.uuid4(),
+                order_status=order_status,
+                cart_uuid=cart_uuid,
+                cart_item=cart_items
+            )
+
+            order.save()
+
+        except Exception as e:
+            logging.error(" %s", str(e))
+            data = {'error': str(e)}
+            return Response(data)
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
 

@@ -88,6 +88,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     order_status = OrderStatusSerializer()
+    cart_item = CartItemSerializer(many=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
