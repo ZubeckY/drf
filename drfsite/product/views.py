@@ -222,14 +222,29 @@ class OrdersAPIList(generics.ListCreateAPIView):
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-# Order
 class OrdersAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
+# OrderItem
+class OrderItemAPIList(generics.ListCreateAPIView):
+    queryset = OrderStatus.objects.all()
+    serializer_class = OrderItemSerializer
+
+
 # OrderStatus
 class OrderStatusAPIList(generics.ListCreateAPIView):
     queryset = OrderStatus.objects.all()
     serializer_class = OrderStatusSerializer
+
+
+class CouponAPIList(generics.ListCreateAPIView):
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
+
+
+class CouponDiscountTypeAPIList(generics.ListCreateAPIView):
+    queryset = CouponDiscountType.objects.all()
+    serializer_class = CouponDiscountTypeSerializer

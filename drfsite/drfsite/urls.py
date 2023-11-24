@@ -49,6 +49,8 @@ urlpatterns = [
     # orders
     path('api/v1/order/', OrdersAPIList.as_view()),
     path('api/v1/order/<int:pk>/', OrdersAPIUpdate.as_view()),
+    # order-item
+    path('api/v1/order-item/', OrderItemAPIList.as_view()),
     # order-status
     path('api/v1/order-status/', OrderStatusAPIList.as_view()),
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import (Product, SubProduct, Brand, Category,
-                     Advantage, Shop, Stock, Measure,
-                     Cart, CartItem, Order, OrderStatus, )
+from .models import (Product, SubProduct, Brand, Category, Advantage,
+                     Shop, Stock, Measure, Cart, CartItem,
+                     Order, OrderItem, OrderStatus, Coupon, CouponDiscountType, )
 
 
 class AdvantageSerializer(serializers.ModelSerializer):
@@ -86,9 +86,15 @@ class OrderStatusSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = "__all__"
+
+
 class OrderSerializer(serializers.ModelSerializer):
     order_status = OrderStatusSerializer()
-    cart_item = CartItemSerializer(many=True)
+    order_item = OrderItemSerializer(many=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -96,3 +102,13 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
+        fields = '__all__'
+
+
+class CouponDiscountTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CouponDiscountType
+        fields = '__all__'
