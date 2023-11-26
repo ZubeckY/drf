@@ -1,12 +1,46 @@
 import uuid
 import logging
-from rest_framework import generics, viewsets, status
+from rest_framework import generics, viewsets, views, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
+from django.contrib.auth.models import User
+import phonenumbers
+import random
 
 from .permissions import *
 from .serializers import *
+
+
+class PhoneVerificationView(views.APIView):
+    def post(self, request):
+        serializer = PhoneVerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            phone = serializer.validated_data['phone']
+            # Generate OTP code
+            otp_code = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+            # Save OTP code in User model or somewhere else
+            # Send OTP code to the user
+            return Response({'otp_code': otp_code}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OTPVerificationView(views.APIView):
+    def post(self, request):
+        serializer = OTPVerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            phone = serializer.validated_data['phone']
+            otp_code = serializer.validated_data['otp_code']
+            # Check if OTP code is valid
+
+            # If user exists, authenticate, else create new user
+            user, created = User.objects.get_or_create(phone=phone)
+            # Return appropriate response
+            return Response({'authenticated': True}, status=status.HTTP_200_OK) if created else Response(
+                {'authenticated': True}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Product

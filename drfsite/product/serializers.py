@@ -4,6 +4,15 @@ from .models import (Product, SubProduct, Brand, Category, Advantage,
                      Order, OrderItem, OrderStatus, Coupon, CouponDiscountType, )
 
 
+class PhoneVerificationSerializer(serializers.Serializer):
+    phone = serializers.CharField()
+
+
+class OTPVerificationSerializer(serializers.Serializer):
+    phone = serializers.CharField()
+    otp_code = serializers.CharField()
+
+
 class AdvantageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advantage

@@ -54,6 +54,9 @@ urlpatterns = [
     # order-status
     path('api/v1/order-status/', OrderStatusAPIList.as_view()),
 
+    path('api/v1/send-code/', PhoneVerificationView.as_view()),
+    path('api/v1/verify-code/', OTPVerificationView.as_view()),
+
     # path('api/v1/', include(router.urls)),
     # auth
     path('api/v1/auth/', include('djoser.urls')),

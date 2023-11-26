@@ -1,6 +1,41 @@
 from datetime import date
+# from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
+    otp_code = models.CharField(max_length=4, verbose_name='OTP_CODE', blank=True)
+    address = models.ManyToManyField('Address', blank=True, verbose_name='Адреса')
+    birth_date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
+
+
+class Address(models.Model):
+    title = models.CharField(max_length=255, blank=True, verbose_name='Название')
+    region = models.CharField(max_length=255, blank=True, verbose_name='Регион')
+    district = models.CharField(max_length=255, blank=True, verbose_name='Округ')
+    city = models.CharField(max_length=255, blank=True, verbose_name='Город')
+    street = models.CharField(max_length=255, blank=True, verbose_name='Улица')
+    home = models.CharField(max_length=255, blank=True, verbose_name='Номер дома')
+    index = models.CharField(max_length=255, blank=True, verbose_name='Почтовый Индекс')
+    lat = models.CharField(max_length=255, blank=True, verbose_name='длина координат')
+    lon = models.CharField(max_length=255, blank=True, verbose_name='ширина координат')
+    map_link = models.TextField(blank=True, verbose_name='Ссылка для карты')
+
+    class Meta:
+        verbose_name = 'Адрес'
+        verbose_name_plural = 'Адреса'
+
+    def __str__(self):
+        return self.title
 
 
 class Product(models.Model):
@@ -11,7 +46,7 @@ class Product(models.Model):
     description = models.TextField(blank=True, verbose_name='Описание')
     image = models.CharField(max_length=255, blank=True, verbose_name='Изображение')
     image_blur = models.CharField(max_length=255, blank=True, verbose_name='Блюр изображения')
-    brand = models.ForeignKey('Brand', on_delete=models.PROTECT, null=True, verbose_name='Поставщик/бренд')
+    brand = models.ForeignKey('Brand', on_delete=models.CASCADE, null=True, verbose_name='Поставщик/бренд')
     categories = models.ManyToManyField('Category', blank=True, verbose_name='Категории')
     advantages = models.ManyToManyField('Advantage', blank=True, verbose_name='Преимущества')
     sub_products = models.ManyToManyField('SubProduct', blank=True, verbose_name='Подпордукты')
@@ -115,14 +150,7 @@ class Advantage(models.Model):
 
 class Shop(models.Model):
     title = models.CharField(max_length=255, db_index=True, verbose_name='Название')
-    address_region = models.CharField(max_length=255, blank=True, verbose_name='Регион')
-    address_district = models.CharField(max_length=255, blank=True, verbose_name='Округ')
-    address_city = models.CharField(max_length=255, blank=True, verbose_name='Город')
-    address_street = models.CharField(max_length=255, blank=True, verbose_name='Улица')
-    address_home = models.CharField(max_length=255, blank=True, verbose_name='Номер дома')
-    address_lat = models.CharField(max_length=255, blank=True, verbose_name='длина координат')
-    address_lon = models.CharField(max_length=255, blank=True, verbose_name='ширина координат')
-    address_map_link = models.TextField(blank=True, verbose_name='ссылка для карты')
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, verbose_name='Адрес')
     images = models.TextField(blank=True, verbose_name='Изображения')
     contact_phone = models.CharField(max_length=255, blank=True, verbose_name='Контактный телефон')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
@@ -139,8 +167,8 @@ class Shop(models.Model):
 
 class Stock(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название')
-    shop = models.ForeignKey('Shop', on_delete=models.PROTECT, null=True, verbose_name='Магазин')
-    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True, verbose_name='Подпродукт')
+    shop = models.ForeignKey('Shop', on_delete=models.CASCADE, null=True, verbose_name='Магазин')
+    sub_product = models.ForeignKey('SubProduct', on_delete=models.CASCADE, null=True, verbose_name='Подпродукт')
     count = models.IntegerField(default=1, verbose_name='Количество')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
@@ -167,7 +195,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart_uuid = models.CharField(max_length=255, blank=True)
-    sub_product = models.ForeignKey('SubProduct', on_delete=models.PROTECT, null=True, verbose_name='Подпродукт')
+    sub_product = models.ForeignKey('SubProduct', on_delete=models.CASCADE, null=True, verbose_name='Подпродукт')
     count = models.IntegerField(default=1, verbose_name='Количество')
     is_deleted = models.BooleanField(default=False, verbose_name='Удалено')
     is_ordered = models.BooleanField(default=False, verbose_name='Заказано')
@@ -182,9 +210,9 @@ class CartItem(models.Model):
 class Order(models.Model):
     payed = models.BooleanField(default=False, verbose_name='Оплачено')
     payment_uuid = models.CharField(max_length=255, blank=True, unique=True)
-    order_status = models.ForeignKey('OrderStatus', related_name="orderStatus", on_delete=models.PROTECT, null=True,
+    order_status = models.ForeignKey('OrderStatus', related_name="orderStatus", on_delete=models.CASCADE, null=True,
                                      default=5, verbose_name='Статус заказа')
-    cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', related_name="cart", on_delete=models.PROTECT,
+    cart_uuid = models.ForeignKey('Cart', to_field='cart_uuid', related_name="cart", on_delete=models.CASCADE,
                                   null=True)
     order_item = models.ManyToManyField('OrderItem', blank=True, verbose_name='Товары в заказе')
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
@@ -230,8 +258,10 @@ class Coupon(models.Model):
     title = models.CharField(max_length=255, verbose_name='Навзание')
     value = models.IntegerField(blank=True, verbose_name='Скидка', default=1)
     active_from_price = models.IntegerField(blank=True, verbose_name='От суммы заказа', default=1)
-    discount_type = models.ForeignKey('CouponDiscountType', on_delete=models.CASCADE, null=True, verbose_name='Тип скидки')
-    sub_product = models.ForeignKey('SubProduct', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Продукт по промокоду')
+    discount_type = models.ForeignKey('CouponDiscountType', on_delete=models.CASCADE, null=True,
+                                      verbose_name='Тип скидки')
+    sub_product = models.ForeignKey('SubProduct', on_delete=models.CASCADE, null=True, blank=True,
+                                    verbose_name='Продукт по промокоду')
     is_active = models.BooleanField(default=True, verbose_name='Активен')
     is_limited = models.BooleanField(default=False, verbose_name='Ограниченное кол-во')
     limited_value = models.IntegerField(blank=True, verbose_name='Кол-во использований', default=1)
@@ -256,6 +286,19 @@ class CouponDiscountType(models.Model):
         ordering = ('title',)
         verbose_name = 'Тип Скидки'
         verbose_name_plural = 'Типы скидок'
+
+    def __str__(self):
+        return self.title
+
+
+class Banner(models.Model):
+    title = models.CharField(max_length=255, verbose_name='Название')
+    image_desktop = models.TextField(blank=True, verbose_name='Изображение для комп. экрана')
+    image_mobile = models.TextField(blank=True, verbose_name='Изображение для моб. экрана')
+
+    class Meta:
+        verbose_name = 'Баннер'
+        verbose_name_plural = 'Баннеры'
 
     def __str__(self):
         return self.title
