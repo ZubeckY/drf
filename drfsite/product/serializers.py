@@ -1,7 +1,13 @@
 from rest_framework import serializers
 from .models import (Product, SubProduct, Brand, Category, Advantage,
-                     Shop, Stock, Measure, Cart, CartItem,
+                     Shop, Stock, Measure, Cart, CartItem, Address,
                      Order, OrderItem, OrderStatus, Coupon, CouponDiscountType, )
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
 
 
 class PhoneVerificationSerializer(serializers.Serializer):
@@ -26,6 +32,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ShopSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
     class Meta:
         model = Shop
         fields = "__all__"
